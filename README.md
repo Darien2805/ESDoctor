@@ -28,33 +28,41 @@ Hence, we propose for a telemedicine microservice where this platform will be ab
 1.	Patient books an E-consult slot with the doctor
 
 Scenario 1a - User signs in
+<br>
 ![Scenario 1a](Readme_images/Scenario1a.png)
 
 Scenario 1b - User books appointment
+<br>
 ![Scenario 1b](Readme_images/Scenario1b.png)
 
 2.	Doctor accepts booking request
 
 Scenario 2a - Get available appointments
+<br>
 ![Scenario 2a](Readme_images/Scenario2a.png)
 
 Scenario 2b - Accept appointment
+<br>
 ![Scenario 2b](Readme_images/Scenario2b.png)
 
 3.	Patient and Doctor Goes for video call (consult) + medication]
 
 Scenario 3a - Patient and doctor goes for consultation
+<br>
 ![Scenario 3a](Readme_images/Scenario3a.png)
 
 Scenario 3b - Create order
+<br>
 ![Scenario 3b](Readme_images/Scenario3b.png)
 
 4.	Prescribed medication is shipped to the patient address.
 
 Scenario 4a - Get orders 
+<br>
 ![Scenario 4a](Readme_images/Scenario4a.png)
 
 Scenario 4b - Update order status
+<br>
 ![Scenario 4b](Readme_images/Scenario4b.png)
 
 <hr>
@@ -115,7 +123,7 @@ To turn the whole system off, please run docker-compose down to turn the enterpr
 <hr>
 
 **Similarly, the doctor is required to sign in via Google. However, only those who are registered as doctors in the firebase are entitled to sign in.**
-![SigninDoctor](Readme_images/SigninDoctor.JPG)
+![SigninDoctor](Readme_images/Signin_Doctor.JPG)
 
 **Appointment page will differ from that of patient's. Doctor's appointment page displays appointments that are awaiting confirmation and those that have been confirmed before.**
 ![DoctorAppt](Readme_images/DoctorAppt.JPG)
@@ -148,19 +156,19 @@ To turn the whole system off, please run docker-compose down to turn the enterpr
 <hr>
 
 **Similarly, the pharmacists is required to sign in via Google. However, only those who are registered as pharmacists in the firebase are entitled to sign in.**
-![SigninDoctor](Readme_images/SigninDoctor.JPG)
+![Signin_Phar](Readme_images/Signin_Phar.JPG)
 
 **Upon logging in, pharmacists homepage will appear differently from the other 2 role's homepages. Pharmacists homepage only requires the "Orders" page.**
 ![PharHompage](Readme_images/PharHompage.JPG)
 
 **The pharmacists will proceed to prepare the drugs by clicking on the "View details" button.**
-![PharOrder](Readme_images/PharOrder.JPG)
+![PharOrder](Readme_images/PharmOrder.JPG)
 
 **After preparing the drugs, the pharmacists will be directed back to the "Orders" page after clicking the "Prepare" button.**
-![PharShip](Readme_images/PharShip.JPG)
+![PharShip](Readme_images/PharmShip.JPG)
 
 **In addition, an email will be sent to the patient that the order has been confirmed.**
 ![Order_Confirmation](Readme_images/Order_Confirmation.JPG)
 
 ## Full Video: ##
-![Scenarios](Scenarios.mpv)
+
