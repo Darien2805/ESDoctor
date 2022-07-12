@@ -3,12 +3,12 @@
 ## 🤓 IS213 -  ESDoctor;
 The team comprises of 6 web developers:
 
-* DARIEN TAN SHI FENG (darien.tan.2020@scis.smu.edu.sg)
+* Darien Tan Shi Feng (darien.tan.2020@scis.smu.edu.sg)
 * Jin Ningxian (ningxianjin.2020@scis.smu.edu.sg)
 * Lim Tse Hwee (tsehwee.lim.2020@scis.smu.edu.sg)
 * Mabelle Tang (mabelletang.2020@scis.smu.edu.sg)
 * Noah Ryan Sam (noahsam.2020@scis.smu.edu.sg)
-* TAN TING CHER BENJAMIN (benjamintan.2020@scis.smu.edu.sg)
+* Tan Ting Cher Benjamin (benjamintan.2020@scis.smu.edu.sg)
 
 ## 🤓 Project Overview ##
 With the recent spike in COVID-19 cases, healthcare institutions and clinics are flooded with patients, eager to get treated. The overcrowding in physical places raises a serious concern with higher risk of transmission and stress on healthcare professionals. 
