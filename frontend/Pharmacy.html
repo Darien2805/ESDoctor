@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <!-- to put in search icon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        #main{
+            display:flex;
+            justify-content: space-around;
+        }
+
+        .underline-primary{
+            /* color:blue; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-primary::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:blue;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .underline-yellow{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-yellow::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#f0ad4e;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        
+        .underline-green{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-green::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#5cb85c;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .text-small{
+            font-size: small;
+        }
+        td{
+            vertical-align: middle;
+        }
+
+
+    </style> 
+
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 ">
+                        <li class="nav-item" id="main">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item" id="main">
+                            <a class="nav-link active me-5" aria-current="page" href="Pharmacy.html">ORDERS</a>
+                        </li>
+                    </ul>
+                        <div class="row nav-item " style="margin-right:20px;">
+                            <div class="col-sm-12" style="padding:0px;">
+                                <a href="profile.html"><i class="bi bi-person-circle" style="font-size:36px; color:grey;"></i></a>
+                            </div>
+                        </div>
+
+                </div>
+            </div>
+        </nav>
+
+        <div class ="row justify-content-center p-3 mb-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:3px solid; margin: auto;">
+            Order requests
+        </div>
+
+        <div class="d-flex justify-content-center" style="margin-bottom: 12px;">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active text-dark underline-primary mx-5" aria-current="page" href="Pharmacy.html">
+                        New order 
+                        <span id = "new_order"class="badge rounded-pill bg-primary" style="box-shadow: 0 4px 2px -1px gray;"></span>
+                    </a>
+                </li>
+               
+                <li class="nav-item">
+                    <a class="nav-link active text-dark mx-5" href="Shipped.html">
+                        Shipped
+                        <span id = "shipped" class="badge rounded-pill bg-success" style="box-shadow: 0 4px 2px -1px gray;"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div style="max-width:80%; margin:0 auto; margin-top:40px;">
+            <div class="input-group mb-3">
+                <span class="input-group-text" style="background-color: #E6F1F8;"><i class="material-icons">search</i></span>
+                <input type="text" class="form-control" placeholder="" style="background-color: #E6F1F8;">
+            </div>
+
+            <div class="">
+                <table id="orderTable" class="table text-small" style="margin: auto;">
+                    <thead>
+                        <tr>
+                            <td scope="col" class="text-center">Patient Info</td>
+                            <td scope="col" class="text-center">Order Info</td>
+                            <td scope="col" class="text-center">Drug Allergy</td>
+                            <td scope="col" class="text-center">Timeline</td>
+                            
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="apptTableBody">
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+
+<script>
+    // Helper function to display error message
+    function showError(message) {
+        // Hide the table and button in the event of error
+        $('#apptTable').hide();
+
+        // Display an error under the main container
+        $('#main')
+            .append("<label>"+message+"</label>");
+    }
+
+    $(async() => {           
+    
+    var serviceURL = "http://localhost:8000/display_orders";
+
+    try {
+        const response =
+            await fetch(
+            serviceURL, {
+            method: 'GET',
+        });
+
+        const result = await response.json();
+        if (response.ok){
+        
+            if (response.status === 200){
+                $('#apptTable').show();
+                alldata = result.data
+                console.log(result.data.orders)
+                orders = result.data.orders
+                var rows = "";
+                numbering = 0
+                shipped_numbering = 0
+                for (orderID in orders) {
+                    current = orders[orderID]
+                    console.log(current)
+                    if (current.status=="Assigned to Pharmacists"){
+                        var newID='a'+orderID;
+                        
+                        numbering += 1
+
+                        var eachRow=""
+                        
+                        var apptID = String(newID.substring(1))
+                        eachRow = `
+                            <td><b>${current.patientName}</b></td>
+                            <td class="text-center"><b>${current.orderID}</b><br>${current.requestedDate} ${current.requestedTime}</td>
+                            <td class="text-center"><b>${current.drugAllergies}</b></td>
+                            <td class="text-center"><b>${current.status}</b></td>
+                            
+                            <td class="text-center">
+                                <button id="${newID}" onclick="viewDetails(${newID})" class="btn text-small confirmAppt" style="background-color: #DEEEFE;"><b>View Details</b></button>
+                            </td>
+                            `                          
+                        rows += "<tr>" + eachRow + "</tr>";
+                    }else if (current.status=="Shipped"){
+                        shipped_numbering +=1
+                    }
+                }
+            }
+            $('#apptTableBody').append(rows)
+                    document.getElementById("new_order").textContent=numbering
+                    document.getElementById("shipped").textContent=shipped_numbering
+                }else{
+                    showError()
+                }
+            } catch (error) {
+                
+                showError
+                ('There are currently no appointments, or there is a problem.<br />' + error);
+            } // error
+    });
+
+    function viewDetails(btn){
+        console.log(btn.id.substring(1))
+        orderID_selected = btn.id.substring(1)
+        window.location.replace("./ViewDetails.html"+"?orderID="+orderID_selected);
+
+        
+    }
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+
+</html>

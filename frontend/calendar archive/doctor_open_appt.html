@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <!-- to put in search icon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* for the underlines */
+        .underline-blue{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-blue::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#599ED6;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .underline-yellow{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-yellow::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#f0ad4e;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .underline-green{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-green::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#5cb85c;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .text-small{
+            font-size: small;
+        }
+        td{
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active me-5" href="doctor_open_appt.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" aria-current="page" href="doctor_order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3 mb-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Appointments
+        </div>
+
+        <div class="d-flex justify-content-center" style="margin-bottom: 12px;">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link active mx-5 underline-blue disabled" style="color: #599ED6;" aria-current="page" href="#">
+                        Open Appointments
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active text-dark mx-5" href="doctor_pending_appt.html">
+                        Awaiting Confirmation
+                        <span class="badge rounded-pill bg-warning" style="box-shadow: 0 4px 2px -1px gray;">3</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active text-dark mx-5" href="doctor_booked_appt.html">
+                        Booked Appointments
+                        <span class="badge rounded-pill bg-success" style="box-shadow: 0 4px 2px -1px gray;">3</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div style="max-width:80%; margin:0 auto; margin-top:40px;">
+            i need put in calendar :")
+        </div>
+
+        <!-- here, for darien or whoever, load the payment data, and then do a for each data you can just 
+        make another div class orderSheet and then copy the code above and repeat for each data -->
+
+
+    </div>
+
+    <script>
+        // Helper function to display error message
+        function showError(message) {
+            // Hide the table and button in the event of error
+            $('#booksTable').hide();
+            $('#addBookBtn').hide();
+    
+            // Display an error under the main container
+            $('#main-container')
+                .append("<label>"+message+"</label>");
+        }
+        //optional value see below comment on if customer determining
+        // var isbn13 = $('#isbn13').val();
+        var apptDate = $('#apptDate').val();
+        var apptTime = $('#apptTime').val();
+        var chiefComplaint = $('#chiefComplaint').val();
+        var remarks = $('#remarks').val();
+
+        // anonymous async function 
+        // - using await requires the function that calls it to be async
+        $(".formSubmit").click(()=>{
+            // we need to find where or how to get customer ID, only when we get customerID then we can get the name
+            // const customerName = customerName
+            const ourURL = "http://127.0.0.1:5001/patient" + "/" 
+            //get the customerID for the appointment request
+            fetch(ourURL).then(response => response.json()).then(data => () => {
+                console.log(data)
+                // should be this code to get patient ID I think
+                const patientID = data["patientID"]
+            })
+            
+            //only after we get the first part then then we can post this to the appointment.py backend
+            $(async() => {           
+            // Change serviceURL to your own
+            // we have to determine if we want google firestore to create a custom ID or let the customer determine the ID
+            // if let customer determine, we have to change isbn13 appropriately I will let you guys code this
+
+            //REMEMBER TO CHANGE ISBN13 TO APPOINTMENTID PLSSSS
+            var serviceURL = "http://127.0.0.1:5001/appointment" + "/" + isbn13 ;
+            // console.log(serviceURL)
+            try {
+                const response =
+                 await fetch(
+                   serviceURL, {
+		           method: 'POST',
+		           headers: { "Content-Type": "application/json" },
+		           body: JSON.stringify({ appointmentID: isbn13, patientID: patientID, requestedDate: apptDate, 
+                   requestedTime: apptTime, chiefComplaint: chiefComplaint, remarks: remarks })
+	            });
+                const result = await response.json();
+                console.log(result);
+                 if (response.status === 200) {
+                    // success case
+                    console.log(result.data)
+                    } else if (response.status == 404) {
+                        // No books
+                        showError(result.message);
+                    } else {
+                        // unexpected outcome, throw the error
+                        throw response.status;
+                }
+            } catch (error) {
+                // Errors when calling the service; such as network error, 
+                // service offline, etc
+                showError
+                ('There are currently no books, or there is a problem.<br />' + error);
+            } // error
+            });
+        })
+
+    </script>
+
+</body>
+</html>

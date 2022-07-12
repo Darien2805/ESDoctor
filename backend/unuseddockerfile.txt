@@ -1,0 +1,6 @@
+FROM python:3-slim
+WORKDIR /usr/src/app
+COPY requirements.txt ./
+RUN python -m pip install --no-cache-dir -r requirements.txt
+COPY ./Routes/google_login.py ./Routes/amqp_email_setup.py ./Routes/appointment.py ./Routes/doctor.py ./Routes/drugs.py ./Routes/invokes.py ./Routes/manage_appointments.py ./Routes/manage_login.py ./Routes/manage_orders.py ./Routes/manage_payment.py ./Routes/manage_pharmacists.py ./Routes/order.py ./Routes/patient.py ./Routes/pharmacy.py ./Routes/send_order.py ./Routes/send_payment.py ./Routes/send_timeslot.py ./key.json ./
+CMD [ "python", "./Routes/google_login.py", "./Routes/amqp_email_setup.py", "./Routes/appointment.py", "./Routes/doctor.py", "./Routes/drugs.py", "./Routes/invokes.py", "./Routes/manage_appointments.py", "./Routes/manage_login.py", "./Routes/manage_orders.py", "./Routes/manage_payment.py", "./Routes/manage_pharmacists.py", "./Routes/order.py", "./Routes/patient.py", "./Routes/pharmacy.py", "./Routes/send_order.py", "./Routes/send_payment.py", "./Routes/send_timeslot.py", "./key.json"]

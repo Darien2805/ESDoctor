@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Booking</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+        <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+        </symbol>
+        <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+            <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+        </symbol>
+    </svg>
+    <style>
+        .formBase {
+            display: flex;
+            margin-right: auto;
+            margin-left: auto;
+        }
+        .formContainer {
+            background-color: #DEEEFE;
+            border-radius: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active me-5" href="appointmentDashboard.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" aria-current="page" href="Order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Appointments
+        </div>
+        <div class="formContainer">
+
+            <h1 class='formTitle'>Make an appointment</h1>
+            <form class="formBase" >
+            <!-- use this line if you need text inputs -->
+            <!-- <p class="subtitle">Email Address</p>
+            <input type="text"  class="formInput" placeholder="Enter your email address" /> -->
+            <p class="subtitle"><span><i class="fa-solid fa-calendar"></i></span> Enter your preferred date : </p>
+            <input type="date" class="formInput" id="apptDate" required />
+            <p class="subtitle"><span><i class="fa-solid fa-clock"></i></span> Enter your preferred timing</p>
+            <input type="time" class="formInput" id="apptTime" required/>
+            <p class="subtitle">What are your symptoms?</p>
+            <textarea rows="4" cols="50" placeholder="What are your symptoms?" id="chiefComplaint" class="formTextArea" required></textarea>
+            <p class="subtitle">Enter additional remarks</p>
+            <textarea rows="4" cols="50" placeholder="Additional Remarks?" id="remarks" class="formTextArea" required></textarea>
+            <button id="formSubmit" class="formSubmit" type="submit" > Book Appointment</button>
+            
+      
+          </form>
+          
+      
+        </div>
+        <div id="success">
+        </div>
+        <div id="main-container">
+           <a href="appointmentDashboard.html"> <button class="formSubmit">Back to dashboard</button></a>
+        </div>
+    </div>
+
+    <script>
+        //Restrictions of date
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+        document.getElementById("apptDate").setAttribute('min', today);
+        document.getElementById("apptDate").setAttribute('max', today);
+        document.getElementById("apptDate").value = today;
+        console.log(today);
+        
+        // Helper function to display error message
+        function showError(message) {
+            // Display an error under the main container
+            $('#main-container')
+                .append("<label>"+message+"</label>");
+        }
+        //optional value see below comment on if customer determining
+        // var isbn13 = $('#isbn13').val();
+
+
+        // anonymous async function 
+        // - using await requires the function that calls it to be async
+        $("#formSubmit").click( async(event)=>{
+            event.preventDefault()
+            // we need to find where or how to get customer ID, only when we get customerID then we can get the name
+            // const customerName = customerName
+            var apptDate = $('#apptDate').val()
+            var apptTime = $('#apptTime').val();
+            var chiefComplaint = $('#chiefComplaint').val();
+            var remarks = $('#remarks').val()
+
+            $(async() => {           
+            // Change serviceURL to your own
+
+            patientID = sessionStorage.user_email
+            console.log(patientID)
+            var serviceURL = "http://localhost:5001/add-appointment" ;
+                
+            const response =
+                await fetch(
+                serviceURL, {
+                method: 'POST',
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ appointmentID: patientID, patientID: patientID, requestedDate: apptDate, 
+                requestedTime: apptTime, chiefComplaint: chiefComplaint, remarks: remarks, status: "pending" })
+            });
+            const result = await response.json();
+            console.log(result);
+                if (response.status == 201) {
+                    // success case
+                    console.log(result.data)
+                    document.getElementById("success").innerHTML= `
+                    <div class="alert alert-success d-flex align-items-center" role="alert">
+                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                            <div>
+                                Booking sent
+                            </div>
+                    </div>
+                    `
+                    } else if (response.status == 500){
+                        // No books
+                        //showError(result.message);
+                        //throw response.status;
+                        document.getElementById("success").innerHTML= `
+                        <div class="alert alert-danger d-flex align-items-center" role="alert">
+                            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                            <div>
+                                Error occured! Please try again
+                            </div>
+                        </div>
+                        `
+                    }
+            });
+        })
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

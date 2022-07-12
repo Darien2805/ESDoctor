@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        .prescribeSheet{
+            min-height:650px;
+            background-color:#DEEEFE;
+            max-width:70%;
+            padding:2% 5% 2% 5%;
+            margin:0 auto;
+            margin-top:20px;
+            border-radius: 20px;
+        }
+        .subheading{
+            font-size: x-large;
+            text-align: left;
+        }
+        .text-small{
+            font-size: small;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="doctor_pending_appt.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active me-5" aria-current="page" href="doctor_order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3" style = "width: 250px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Prescription Record
+        </div>
+        <div id="main-container" style="text-align: left;">
+            <div id="content" class="prescribeSheet">
+                <p class="subheading">
+                    Patient Info<hr/>
+                </p>
+                <p class="mb-5 text-small">
+                    <b>Name: </b><span id="patientName"></span><br>
+                    <b>Appointment: </b><span id="apptDateTime"></span><br>
+                    <b>Drug Allergies: <span class="text-danger" id="drugAllergies"></span></b><br><br>
+                    <b>Symptoms: </b><u><span id="symptoms"></span></u>
+                </p>
+
+                <p class="subheading">
+                    Prescription<hr/>
+                </p>
+                <table id="drugTable" class="table mb-5 text-small" style="margin: auto;">
+                    <thead>
+                        <tr>
+                            <td>Drug</td>
+                            <td>Quantity</td>
+                            <td>Comments</td>
+                        </tr>
+                    </thead>
+                    <tbody id="drugTableBody">
+                    </tbody>
+                </table>
+                <p id="noDrugs" class="table mb-5 text-small" style="display: none;"></p>
+
+                <p class="subheading">
+                    Other Comments<hr/>
+                </p>
+                <b id="comments"></b>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // Helper function to display error message
+        function showError(message) {
+            // Hide the table and button in the event of error
+            $('#content').hide();
+    
+            // Display an error under the main container
+            $('#main-container').append("<label>"+message+"</label>");
+        }
+
+        // getting the orderID which is apptID
+        var url = window.location.href
+        var orderID=url.split("=")[1]
+        console.log(orderID)
+
+        // Display order info
+        $(async() => {
+            var serviceURL = "http://localhost:8000/display_order" + "/" + orderID ;
+            console.log(serviceURL)
+            try {
+                const response =
+                    await fetch(
+                    serviceURL, {
+                    method: 'GET',
+                });
+                
+                const result = await response.json();
+                console.log(result);
+                console.log(result.data)
+                    if (response.status === 200) {
+                    // success case
+                    // display patient info on html
+                    $('#patientName').append(result.data.patientName);
+                    $('#apptDateTime').append(result.data.requestedDate+" "+result.data.requestedTime);
+                    $('#drugAllergies').append(result.data.drugAllergies);
+                    $('#symptoms').append(result.data.chiefComplaint);
+                    // display other comments on html
+                    if (result.data.otherComments==""){
+                        $('#comments').append("No other comments from doctor");
+                    }
+                    else{
+                        $('#comments').append(result.data.otherComments);
+                    }
+                    // display drugs on html
+                    drugs=result.data.drugs
+                    console.log(drugs.length)
+                    if (drugs.length==0){
+                        $('#drugTable').hide();
+                        $('#noDrugs').show();
+                        $('#noDrugs').append(`No medication prescribed.`)
+                    }
+                    else{
+                        for (i in drugs){
+                            $('#drugTableBody').append(`
+                            <tr>
+                                <td><b>${drugs[i][0]}</b></td>
+                                <td><b>${drugs[i][1]}</b></td>
+                                <td>${drugs[i][2]}</td>
+                            </tr>`)
+                        }
+                    }
+                    } else if (response.status == 404) {
+                    
+                        showError(result.message);
+                    } else {
+                        throw response.status;
+                }
+            } catch (error) {
+                showError('This prescription record does not exist, or there is a problem.<br />' + error);
+            } // error
+        });
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+</body>
+</html>

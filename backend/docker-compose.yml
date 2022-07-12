@@ -1,0 +1,504 @@
+version: "3.8"
+
+volumes:
+  rabbitmq_data:
+  pgdata: 
+  kongadata:
+
+networks:
+  kong-net:
+    driver: bridge
+
+
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    hostname: esd-rabbit
+    restart: always
+    networks:
+      - kong-net
+    ports:
+      - "5672:5672"      
+      - "15672:15672"
+    volumes: 
+      - rabbitmq_data:/var/lib/rabbitmq
+    
+
+
+  # #################################
+  # # : The Book microservice
+  # #################################
+  # book:
+  #   image: darien2805/book:1.0
+  #   restart: always
+  #   environment:
+  #     dbURL: mysql+mysqlconnector://is213@host.docker.internal:3306/book
+
+  # ###############################################
+  # # callbook: The test_invoke_http.py program
+  # ###############################################
+  # callbook:
+  #   image: darien2805/callbook:1.0
+  #   depends_on:
+  #     - book
+  #   environment:
+  #     bookURL: http://book:5000/book
+
+  #################################
+  # Key: The  microservice
+  #################################
+  # key:
+  #   build:
+  #     context: ./Routes
+  #     dockerfile: key.Dockerfile
+  #   image: darien2805/key:1.0
+  #   restart: always
+
+
+  #################################
+  # google_login: The  microservice
+  #################################
+  google_login:
+    build:
+      context: ./
+      dockerfile: google_login.Dockerfile
+    image: darien2805/google_login:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    
+
+ ###############################################
+  # appointment: The  microservice
+  ###############################################
+  appointment:
+    build:
+      context: ./Routes
+      dockerfile: appointment.Dockerfile
+    image: darien2805/appointment:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "5001:5001"
+
+
+  ###############################################
+  # invokes: The test_invoke_http.py program
+  ###############################################
+
+    # depends_on:
+    #   - book
+
+
+  ###############################################
+  # amqp_email_setup: The  microservice
+  ###############################################
+  # amqp_email_setup:
+  #   build:
+  #     context: ./Routes
+  #     dockerfile: amqp_email_setup.Dockerfile
+  #   image: darien2805/amqp_email_setup:1.0
+  #   restart: always
+  #   depends_on:
+  #     - rabbitmq
+  #   environment:
+  #     rabbit_host: rabbitmq
+  #     rabbit_port: 5672
+  #     PYTHONUNBUFFERED: 1
+  #   volumes: 
+  #     - rabbitmq_data:/var/lib/rabbitmq
+      
+    # depends_on:
+    #   - book
+
+  
+ 
+
+  ###############################################
+  # doctor: The  microservice
+  ###############################################
+  doctor:
+    build:
+      context: ./Routes
+      dockerfile: doctor.Dockerfile
+    image: darien2805/doctor:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5003:5003"
+
+
+
+  ###############################################
+  # drugs: The  microservice
+  ###############################################
+  drugs:
+    build:
+      context: ./Routes
+      dockerfile: drugs.Dockerfile
+    image: darien2805/drugs:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5006:5006"
+
+
+  ###############################################
+  # manage_appointments: The  microservice
+  ###############################################
+  manage_appointments:
+    build:
+      context: ./Routes
+      dockerfile: manage_appointments.Dockerfile
+    image: darien2805/manage_appointments:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - patient
+      - appointment
+      - send_timeslots
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      appointment_URL: http://appointment:5001/appointment
+      patient_URL: http://patient:5002/patient
+      send_timeslots_URL: http://send_timeslots:5003/send_timeslots
+    ports:
+      - "5100:5100"
+
+
+
+
+  ###############################################
+  # manage_login: The  microservice
+  ###############################################
+  manage_login:
+    build:
+      context: ./Routes
+      dockerfile: manage_login.Dockerfile
+    image: darien2805/manage_login:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - doctor
+      - patient
+      - pharmacy
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      googleLogin_URL: http://googleLogin:8080/authorize
+      patient_URL: http://patient:5002/add-patient
+    ports:
+      - "5110:5110"
+
+
+  ###############################################
+  # manage_orders: The  microservice
+  ###############################################
+  manage_orders:
+    build:
+      context: ./Routes
+      dockerfile: manage_orders.Dockerfile
+    image: darien2805/manage_orders:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - patient
+      - appointment
+      - order
+      - drugs
+      - rabbitmq
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      appointment_URL: http://appointment:5001/appointment
+      patient_URL: http://patient:5002/patient
+      order_URL: http://order:5005/order
+      drug_URL: http://drugs:5006/drugs
+    ports:
+      - "5101:5101"
+
+
+  ###############################################
+  # manage_payment: The  microservice
+  ###############################################
+  manage_payment:
+    build:
+      context: ./Routes
+      dockerfile: manage_payment.Dockerfile
+    image: darien2805/manage_payment:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - order
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+      update_order: http://order:5005/update-order
+      order_URL: http://order:5005/order
+    ports:
+      - "5102:5102"
+
+
+  ###############################################
+  # manage_pharmacists: The  microservice
+  ###############################################
+  manage_pharmacists:
+    build:
+      context: ./Routes
+      dockerfile: manage_pharmacists.Dockerfile
+    image: darien2805/manage_pharmacists:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - patient
+      - doctor
+      - order
+      - drugs
+    environment:
+      patient_URL: http://patient:5002/patient
+      doctor_URL: http://doctor:5003/doctor
+      order_URL: http://order:5005/order
+      drug_URL: http://drugs:5006/drugs
+      update_order: http://order:5005/update-order
+    ports:
+      - "5103:5103"
+
+
+
+  ###############################################
+  # order: The  microservice
+  ###############################################
+  order:
+    build:
+      context: ./Routes
+      dockerfile: order.Dockerfile
+    image: darien2805/order:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5005:5005"
+
+
+  
+  ###############################################
+  # patient: The  microservice
+  ###############################################
+  patient:
+    build:
+      context: ./Routes
+      dockerfile: patient.Dockerfile
+    image: darien2805/patient:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5002:5002"
+
+
+  ###############################################
+  # pharmacy: The  microservice
+  ###############################################
+  pharmacy:
+    build:
+      context: ./Routes
+      dockerfile: pharmacy.Dockerfile
+    image: darien2805/pharmacy:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+    ports:
+      - "5004:5004"
+    
+     
+
+
+  ###############################################
+  # send_order: The  microservice
+  ###############################################
+  send_order:
+    build:
+      context: ./Routes
+      dockerfile: send_order.Dockerfile
+    image: darien2805/send_order:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+      - patient
+      - appointment
+      - order
+      - drugs
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+
+  ###############################################
+  # send_payment: The  microservice
+  ###############################################
+  send_payment:
+    build:
+      context: ./Routes
+      dockerfile: send_payment.Dockerfile
+    image: darien2805/send_payment:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+      - patient
+      - appointment
+      - order
+      - drugs
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+    
+      
+
+
+  ###############################################
+  # send_timeslots: The  microservice
+  ###############################################
+  send_timeslots:
+    build:
+      context: ./Routes
+      dockerfile: send_timeslot.Dockerfile
+    image: darien2805/send_timeslots:1.0
+    restart: always
+    networks:
+      - kong-net
+    depends_on:
+      - rabbitmq
+      - patient
+      - appointment
+      - order
+      - drugs
+    environment:
+      rabbit_host: rabbitmq
+      rabbit_port: 5672
+      PYTHONUNBUFFERED: 1
+
+
+
+
+  #######################################
+  # Postgres: The database used by Kong
+  #######################################
+  kong-database:
+    image: postgres:9.6
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "kong"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  #######################################
+  # Kong database migration
+  #######################################
+  kong-migration:
+    image: kong:2.0.4
+    command: "kong migrations bootstrap"
+    restart: on-failure
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+    depends_on:
+      - kong-database
+
+  #######################################
+  # Kong: The API Gateway
+  #######################################
+  kong:
+    image: kong:2.0.4
+    restart: always
+    networks:
+      - kong-net
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: password
+      KONG_PROXY_LISTEN: 0.0.0.0:8000
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+    depends_on:
+      - kong-migration
+    ports:
+      - "8000:8000"
+  
+  #######################################
+  # Konga: Kong GUI
+  #######################################
+  konga:
+    image: pantsel/konga
+    restart: always
+    networks:
+        - kong-net
+    environment:
+      DB_ADAPTER: postgres
+      DB_HOST: kong-database
+      DB_USER: kong
+      DB_PASSWORD: password
+      DB_DATABASE: konga_db
+    depends_on:
+      - kong
+    ports:
+      - "1337:1337"
+    volumes:
+      - kongadata:/app/kongadata
+
+
+
+
+

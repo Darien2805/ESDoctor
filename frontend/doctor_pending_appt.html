@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <!-- to put in search icon -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- MDC -->
+    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.13.1/firebase-firestore.js"></script>
+
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* for the underlines */
+        .underline-blue{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-blue::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#599ED6;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .underline-yellow{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-yellow::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#f0ad4e;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .underline-green{
+            /* color:green; */
+            display:inline-block;
+            position:relative;
+        }
+        .underline-green::after{
+            content:'';
+            height:2px;
+            width:50%;
+            background:#5cb85c;
+            position:absolute;
+            left:calc(50% - 25%);
+            bottom:-5px;
+        }
+        .text-small{
+            font-size: small;
+        }
+        td{
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="doctor_signin.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active me-5" href="doctor_pending_appt.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="doctor_consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" aria-current="page" href="doctor_order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3 mb-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Appointments
+        </div>
+
+        <div class="d-flex justify-content-center" style="margin-bottom: 12px;">
+            <ul class="nav">
+                <li class="nav-item">
+                    <a class="nav-link disabled text-dark underline-yellow mx-5" aria-current="page" href="#">
+                        Awaiting Confirmation
+                        <span id="waiting" class="badge rounded-pill bg-warning" style="box-shadow: 0 4px 2px -1px gray;"></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active text-dark mx-5" href="doctor_booked_appt.html">
+                        Confirmed Appointments
+                        <span id="confirmed" class="badge rounded-pill bg-success" style="box-shadow: 0 4px 2px -1px gray;"></span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <div id="main" style="max-width:80%; margin:0 auto; margin-top:40px;">
+            <div class="input-group mb-3">
+                <span class="input-group-text" style="background-color: #E6F1F8;"><i class="material-icons">search</i></span>
+                <input type="text" class="form-control" placeholder="" style="background-color: #E6F1F8;">
+            </div>
+
+            <div class="">
+                <table id="apptTable" class="table text-small" style="margin: auto;">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <td scope="col" class="text-center">Patient Info</td>
+                            <td scope="col" class="text-center">Date/Time Booked</td>
+                            <td scope="col" class="text-center">Drug Allergy</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                    <tbody id="apptTableBody" style = "text-align: center;">
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+
+
+    </div>
+
+    <script>
+        // Helper function to display error message
+        function showError(message) {
+            // Hide the table and button in the event of error
+            $('#apptTable').hide();
+    
+            // Display an error under the main container
+            $('#main')
+                .append("<label>"+message+"</label>");
+        }
+        
+        $(async() => {           
+
+        var serviceURL = "http://localhost:8000/display_appointment";
+        
+        try {
+            const response =
+                await fetch(
+                serviceURL, {
+                method: 'GET',
+            });
+            const result = await response.json();
+            if (response.ok){
+                if (response.status === 200){
+                    $('#apptTable').show();
+                    appt = result.data
+                    
+                    var rows = "";
+                    numbering = 0
+                    for (i = 0; i < appt.appointments.length; i++) {
+                        current = appt.appointments[i]
+
+                        if (current.status=="pending"){
+                            var newID='a'+current.appointmentID;
+
+                            numbering += 1
+
+                            var eachRow=""
+                            
+                            var apptID = String(newID.substring(1))
+                            eachRow = `
+                                <td scope='row'><b>${numbering}</b></td>
+                                <td>${current.patientName}</td>
+                                <td>${current.requestedDate} ${current.requestedTime}</td>
+                                <td>${current.drugAllergies}</td>
+                                <td class="text-center">
+                                    <button class="btn text-small" style="background-color: #DEEEFE;" onclick="viewAppointment(${newID})"><b>View Details</b></button>
+                                </td>
+                                <td class="text-center">
+                                    <button id="${newID}"  onclick="confirmAppointment(${newID}); createRoom('${apptID}')" class=" btn text-small confirmAppt" style="background-color: #DEEEFE;"><b>Confirm</b></button>
+                                </td>`;                                
+                            rows += "<tr>" + eachRow + "</tr>";
+                        }
+                    }
+                }
+                
+                $('#apptTableBody').append(rows)
+                document.getElementById("waiting").textContent=numbering
+                document.getElementById("confirmed").textContent=result.data.appointments.length-numbering
+            }else{
+                showError()
+            }
+        } catch (error) {
+            
+            showError
+            ('There are currently no appointments, or there is a problem.<br />' + error);
+        } // error
+        });
+        
+
+        // DOESNT UPDATE THE TABLE WHEN CHANGED TO FIREBASE DATA IS MADE
+        function confirmAppointment(btn){
+            console.log(btn.id.substring(1));
+            var apptID = btn.id.substring(1);
+            
+            $(async() => {
+            
+            var serviceURL = "http://localhost:5100/update-appointment" + "/" +apptID
+            console.log(serviceURL)
+            try {
+                const response =
+                    await fetch(
+                    serviceURL, {
+                    method: 'PUT',
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        "status": "accepted"
+                    })
+                    // appointmentID: apptID,
+                    // status: "confirmed"
+                });
+                console.log("TEST TEST")
+                const result = await response.json();
+                console.log(result);
+                if (response.status === 200) {
+                        // success case
+                        console.log(result.data)
+                        
+                        //
+                } else if (response.status == 404) {
+                    showError(result.message);
+                } else {
+                    // unexpected outcome, throw the error
+                    throw response.status;
+                }
+            } catch (error) {
+                
+                showError
+                ('There are currently no appointments, or there is a problem.<br />' + error);
+            } // error
+            });
+        }
+
+        function viewAppointment(btn){
+            console.log(btn.id.substring(1));
+            var apptID = btn.id.substring(1);
+            
+            window.location.replace("./doctor_appt_info.html"+"?apptID="+apptID);
+        }
+        
+        const firebaseConfig = {
+
+            apiKey: "AIzaSyC39QBbBwk0E5HDddnUV_ZFwPMBrhGQmno",
+
+            authDomain: "esdproject-telemedicine.firebaseapp.com",
+
+            projectId: "esdproject-telemedicine",
+
+            storageBucket: "esdproject-telemedicine.appspot.com",
+
+            messagingSenderId: "1045290834485",
+
+            appId: "1:1045290834485:web:03be3baf4aba47ada16f7c"
+
+        }
+        
+            firebase.initializeApp(firebaseConfig)
+            // Default configuration - Change these if you have a different STUN or TURN server.
+        const configuration = {
+            iceServers: [
+                {
+                    urls: [
+                    'stun:stun1.l.google.com:19302',
+                    'stun:stun2.l.google.com:19302',
+                    ],
+                },
+            ],
+                iceCandidatePoolSize: 10,
+            };
+            let peerConnection = null;
+            let remoteStream = null;
+            let roomDialog = null;
+            let roomId = null;
+
+    async function createRoom(appointmentID) {
+
+        const db = firebase.firestore();
+        const roomRef = await db.collection('rooms').doc(appointmentID);
+        console.log('Create PeerConnection with configuration: ', configuration);
+        peerConnection = new RTCPeerConnection(configuration);
+
+        registerPeerConnectionListeners();
+
+
+        // Code for collecting ICE candidates
+        const callerCandidatesCollection = roomRef.collection('callerCandidates');
+
+        peerConnection.addEventListener('icecandidate', event => {
+            if (!event.candidate) {
+            console.log('Got final candidate!');
+            return;
+        }
+        console.log('Got candidate: ', event.candidate);
+        callerCandidatesCollection.add(event.candidate.toJSON());
+        });
+
+  // Code for creating a room
+  const offer = await peerConnection.createOffer();
+  await peerConnection.setLocalDescription(offer);
+  console.log('Created offer:', offer);
+
+  const roomWithOffer = {
+      offer: {
+          type: offer.type,
+          sdp: offer.sdp
+      }
+  }
+  
+  await roomRef.set(roomWithOffer);
+  const roomId = roomRef.id;
+
+
+  // Listening for remote session 
+    roomRef.onSnapshot(async snapshot => {
+        console.log('Got updated room:', snapshot.data());
+        const data = snapshot.data();
+        console.log(data.offer)
+
+        if (!peerConnection.currentRemoteDescription && data.answer) {
+            console.log('Set remote description: ', data.answer);
+            const answer = new RTCSessionDescription(data.answer)
+            await peerConnection.setRemoteDescription(answer);
+        }
+
+    });
+
+    roomRef.collection('calleeCandidates').onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(async change => {
+            if (change.type === 'added') {
+                let data = change.doc.data();
+                console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
+                await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+            }
+        });
+    });
+
+  // Code for collecting ICE candidates
+    async function collectIceCandidates(roomRef, peerConnection,
+        localName, remoteName) {
+        const candidatesCollection = roomRef.collection(localName);
+
+        peerConnection.addEventListener('icecandidate', event => {
+        if (event.candidate) {
+        const json = event.candidate.toJSON();
+        candidatesCollection.add(json);
+        }
+        });
+
+        roomRef.collection(remoteName).onSnapshot(snapshot => {
+        snapshot.docChanges().forEach(change => {
+            if (change.type === "added") {
+                const candidate = new RTCIceCandidate(change.doc.data());
+                peerConnection.addIceCandidate(candidate);
+            }
+        });
+        })
+    }
+    location.reload();
+}
+
+    
+function registerPeerConnectionListeners() {
+  peerConnection.addEventListener('icegatheringstatechange', () => {
+    console.log(
+        `ICE gathering state changed: ${peerConnection.iceGatheringState}`);
+  });
+
+  peerConnection.addEventListener('connectionstatechange', () => {
+    console.log(`Connection state change: ${peerConnection.connectionState}`);
+  });
+
+  peerConnection.addEventListener('signalingstatechange', () => {
+    console.log(`Signaling state change: ${peerConnection.signalingState}`);
+  });
+
+  peerConnection.addEventListener('iceconnectionstatechange ', () => {
+    console.log(
+        `ICE connection state change: ${peerConnection.iceConnectionState}`);
+  });
+
+  
+}
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

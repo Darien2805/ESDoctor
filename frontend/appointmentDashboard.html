@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointment Dashboard</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+       <!-- Bootstrap -->
+       <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+       <!-- Font awesome -->
+       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .pastAppointments{
+            background-color: #DEEEFE;
+            border-radius: 20px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active me-5" href="appointmentDashboard.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" aria-current="page" href="Order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Appointments
+        </div>
+
+        <div id="main-container">
+            <a href="appointmentBooking.html"> <button class="formSubmit">New Appointment</button></a>
+            <div class="upcomingContainer">
+                <div class="upcomingAppointment">
+                    <p>Upcoming Appointment: </p>
+                    <span><i class="fa-solid fa-calendar"></i></span> 
+                    <p id = "upcomingdate">-</p>
+                    <span><i class="fa-solid fa-clock"></i></span>
+                    <p id = "upcomingtime">-</p>
+                    <br>
+                </div>
+                <div class="upcomingAppointment">
+                    <p>AppointmentID : </p>
+                    <p id = "AppointmentID">-</p>
+                    <p>Status: </p>
+                    <p id = "status">-</p>
+                </div>
+                <button class="formSubmit" onclick="copy()">Copy ApptID</button>
+                
+
+            </div>
+
+            <div class="pastAppointments">
+                <p>Past appointments</p>
+                    <table class="table" id = "apptTable">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">AppointmentID</th>
+                                <th scope="col">Date</th>
+                                <th scope="col">Time</th>
+                                <th scope="col">Cheif Complaint</th>
+                            </tr>
+                            </thead>
+                            <tbody id = "apptTablebody">
+                            </tbody>
+                    </table>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <script>
+        // Helper function to display error message
+        function copy() {
+        /* Get the text field */
+        var copyText = document.getElementById("AppointmentID").innerText;
+
+        /* Copy the text inside the text field */
+        navigator.clipboard.writeText(copyText);
+        
+        /* Alert the copied text */
+        alert("Copied the text: " + copyText);
+        }
+        function showError(message) {
+            // Hide the table and button in the event of error
+            $('#apptTable').hide();
+    
+            // Display an error under the main container
+            $('#main-container')
+                .append("<label>"+message+"</label>");
+        }
+        var today = new Date();
+        var dd = today.getDate();
+        var mm = today.getMonth() + 1; //January is 0!
+        var yyyy = today.getFullYear();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        today = yyyy + '-' + mm + '-' + dd;
+
+        patientID = sessionStorage.user_email
+
+        // anonymous async function 
+        // - using await requires the function that calls it to be async
+        /*
+        $(async() => {           
+
+        var serviceURL = "http://127.0.0.1:5001/appointment";
+        // console.log(serviceURL)
+        try {
+            const response =
+                await fetch(
+                serviceURL, {
+                method: 'GET',
+            });
+            const result = await response.json();
+            if (response.ok){
+                    console.log(result)
+                    flag = false
+                    if (response.status === 200){
+                        $('#apptTable').show();
+                        appt = result.data
+                        console.log(appt.appointments)
+                        var rows = "";
+                        
+                        for (i = 0; i < appt.appointments.length; i++) {
+                            console.log(appt.appointments[i]);
+                            if (appt.appointments[i].requestedDate == today && appt.appointments[i].patientID == patientID){
+                                document.getElementById("upcomingdate").innerText = today
+                                document.getElementById("upcomingtime").innerText = appt.appointments[i].requestedTime
+                                document.getElementById("AppointmentID").innerText = appt.appointments[i].appointmentID
+                                document.getElementById("status").innerText = appt.appointments[i].status
+                                flag = true
+                            }
+                            else if (appt.appointments[i].patientID==patientID){
+                                current = appt.appointments[i]
+                                //console.log(new Date(current.requestedDate))
+                                numbering = i+1
+                                eachRow ="<th scope='row'>" + numbering + "</td>" +
+                                        "<td>" + current.appointmentID + "</td>" +
+                                        "<td>" + current.requestedDate + "</td>" +
+                                        "<td>" + current.requestedTime + "</td>" +
+                                        "<td>" + current.chiefComplaint + "</td>";
+                                rows += "<tr>" + eachRow + "</tr>";
+                            }
+                            
+                        }
+                    }
+                    $('#apptTablebody').append(rows)
+                    
+                    if (flag == false){
+                        document.getElementById("upcomingdate").innerText = "-"
+                        document.getElementById("upcomingtime").innerText = "-"
+                        document.getElementById("AppointmentID").innerText = "-"
+                        document.getElementById("status").innerText = "-"
+                    }
+                    
+                }else{
+                    showError('There are currently no appointments, or there is a problem.<br />')
+                }
+        } catch (error) {
+            // Errors when calling the service; such as network error, 
+            // service offline, etc
+            showError
+            ('There are currently no appointments, or there is a problem.<br />' + error);
+        } // error
+        });
+        */
+        $(async() => {
+            var serviceURL = "http://localhost:8000/appointment_patientID/" + patientID;
+            try {
+                const response =
+                    await fetch(
+                    serviceURL, {
+                    method: 'GET',
+                });
+                const result = await response.json();
+                if (response.ok){
+                    //console.log(result)
+                    flag = false
+                    if (response.status === 200){
+                        $('#apptTable').show();
+                        appt = result.data
+                        //console.log(appt)
+                        var rows = "";
+                        numbering = 0
+                        for (i = 0; i < appt.length; i++) {
+                            console.log(appt[i].appointmentID);
+                            //console.log(appt[i].appointmentID);
+                            if (appt[i].requestedDate == today && appt[i].patientID == patientID){
+                                document.getElementById("upcomingdate").innerText = today
+                                document.getElementById("upcomingtime").innerText = appt[i].requestedTime
+                                document.getElementById("AppointmentID").innerText = appt[i].appointmentID
+                                document.getElementById("status").innerText = appt[i].status
+                                flag = true
+                            }
+                            else if (appt[i].patientID==patientID){
+                                current = appt[i]
+                                //console.log(new Date(current.requestedDate))
+                                numbering +=1
+                                eachRow ="<th scope='row'>" + numbering + "</td>" +
+                                        "<td>" + current.appointmentID + "</td>" +
+                                        "<td>" + current.requestedDate + "</td>" +
+                                        "<td>" + current.requestedTime + "</td>" +
+                                        "<td>" + current.chiefComplaint + "</td>";
+                                rows += "<tr>" + eachRow + "</tr>";
+                            }
+                            
+                        }
+                    }
+                    $('#apptTablebody').append(rows)
+                    
+                    if (flag == false){
+                        document.getElementById("upcomingdate").innerText = "-"
+                        document.getElementById("upcomingtime").innerText = "-"
+                        document.getElementById("AppointmentID").innerText = "-"
+                        document.getElementById("status").innerText = "-"
+                    }
+                }
+            }catch (error) {
+                // Errors when calling the service; such as network error, 
+                showError
+                ('There are currently no appointments, or there is a problem.<br />' + error);
+            }
+        })
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+/* general styles */
+
+*, *:before, *:after {
+    box-sizing: border-box;
+}
+html, body {
+    height: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    color: #333333;
+    font-size: 16px;
+}
+
+/* my form templates */
+.formTitle{
+  color: black;
+  font-size: 32px;
+  font-weight: bold;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.subtitle{
+    font-size: 12px;
+    color: black;
+    font-weight: bold;
+    margin-top: 0;
+    margin-bottom: 10px;
+    user-select: none;
+}
+.formContainer {
+  display: flex;
+  flex-direction: column;
+  min-height: 760px;
+  background-color: rgba(228, 241, 254);
+  border-radius: 5px;
+  width: 100%;
+  margin: auto;
+  margin-top:50px;
+  max-width: 850px;
+  padding: 60px 68px 40px;
+  margin-bottom: 100px;
+}
+.formBase {
+  display: flex;
+  flex-direction: column;
+  max-width: 650px;
+  width: 100%;
+}
+.formInput {
+  background: white;
+  border-radius: 4px;
+  border: 0;
+  color: black;
+  height: 50px;
+  line-height: 50px;
+  padding: 5px 20px;
+  margin-bottom: 20px;
+  border: 1px solid grey;
+}
+.formInput:last-of-type{
+  margin-bottom: 30px;
+}
+.formSubmit{
+  background:rgba(243, 204, 204, 1);
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  margin: 24px 0 12px;
+  padding: 16px;
+  border: 0;
+  color: black;
+  cursor: pointer;
+}
+.formTextArea{
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    margin-bottom: 10px;
+}
+.textSmall {
+  margin-top: 10px;
+  font-size: 13px;
+  line-height: normal;
+  color: #8c8c8c;
+}
+
+#main-container{
+  text-align: center;
+}
+.upcomingContainer{
+  text-align: center;
+  align-items: center;
+  margin: 0 auto;
+  background-color:#E6F1F8;
+  max-width:550px;
+  margin-bottom:5%;
+}
+.upcomingAppointment{
+
+  display: flex;
+  justify-content: space-between;
+  margin-top:2%;
+
+  padding:20px;
+  border-radius:5px;
+  
+}
+.pastAppointments{
+  min-height:650px;
+  background-color:#E6F1F8;
+  max-width:70%;
+  padding:2%;
+  margin:0 auto;
+}
+.orderSheet{
+  min-height:650px;
+  background-color:#E6F1F8;
+  max-width:50%;
+  padding:2% 5% 0% 5%;
+  margin:0 auto;
+  margin-top:20px;
+}
+
+.orderRow{
+  display:flex;
+  justify-content:space-between;
+  margin-top:5%;
+}
+.header{
+  background-color:#E6F1F8;
+  padding:3%;
+  border-radius:5px;
+  
+}
+.orderHistoryRow{
+  display:flex;
+  justify-content:space-between;
+  max-width:50%;
+}
+.orderHistory{
+  min-height:650px;
+  max-width:70%;
+  padding:2% 5% 0% 5%;
+  margin:0 auto;
+  margin-top:20px;
+}

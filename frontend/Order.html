@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Orders</title>
+    <link rel="stylesheet" href="./styles/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css" integrity="sha512-YWzhKL2whUzgiheMoBFwW8CKV4qpHQAEuvilg9FAn5VJUDwKZZxkJNuGM4XkWuk94WCrrwslk8yWNGmY1EduTA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        .orderSheet{
+            min-height:650px;
+            background-color:#DEEEFE;
+            max-width:70%;
+            padding:2% 5% 2% 5%;
+            margin:0 auto;
+            margin-top:20px;
+            border-radius: 20px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="wrapper">
+        <nav class="navbar navbar-expand-lg navbar-light" style = "background-color: #E6F1F8; font-size: 18px;">
+            <div class="container-fluid">
+                <a class="navbar-brand rounded" href="index.html"><img src="Assets/rectangle.png" width = "120px" class = "mx-4 rounded-pill" ></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav mx-auto mb-2 mb-lg-0 d-flex justify-content-around ">
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="index.html">HOME</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="appointmentDashboard.html">APPOINTMENTS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="consult.html">CONSULTATION</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5 active" aria-current="page" href="Order.html">ORDERS</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link me-5" href="contact.html">CONTACT US</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class ="row justify-content-center p-3" style = "width: 200px; font-size: larger; font-weight: bold; border-bottom:5px solid; margin: auto;">
+            Orders
+        </div>
+        <div id="main-container">
+            <div class="orderSheet">
+                <p>Recent Consultation</p>
+                <p><u>Order ID </u></p>
+                <p id = "orderid">-</p>
+                <div class="orderRow">
+                    <p>Product/Service</p>
+                    <p>Quantity</p>
+                    <p>Cost</p>
+                </div>
+                <hr />
+                <div id = "order"></div>
+
+            <!-- here, for darien or whoever, load the payment data, and then do a for each data you can just 
+            make another div class orderSheet and then copy the code above and repeat for each data -->
+
+
+            <button id = "formSubmit" class="formSubmit">Proceed to pay</button>
+            </div>
+
+        </div>
+
+        <a class="justify-content-center d-flex" href="orderHistory.html"> <button class="formSubmit">Order History</button></a>
+    </div>
+
+    <script>
+        // Helper function to display error message
+        function showError(message) {
+            // Display an error under the main container
+            $('#main-container')
+                .append("<label>"+message+"</label>");
+        }
+
+        $(async() => {           
+        // Change serviceURL to your own
+            patientID = sessionStorage.user_email
+            //var url = window.location.href
+            //var orderID=url.split("=")[1]
+            //var orderID = "DPRs31ov7sftjAuNeM5U"
+            console.log(patientID)
+
+            var serviceURL = "http://localhost:8000/order_description" + "/" + patientID ;
+            // console.log(serviceURL)
+            try {
+                const response =
+                    await fetch(
+                    serviceURL, {
+                    method: 'GET',
+                });
+                const result = await response.json();
+                console.log(result);
+                    if (response.status === 200) {
+                        // success case
+                        console.log(result.data)
+                        data = result.data[0]
+                        orderID = result.data[1]
+                        document.getElementById("orderid").innerHTML = orderID
+                        rows = ""
+                        total = 0
+                        for (const [key, value] of Object.entries(data)){
+                            rows += `
+                            <div class="orderRow">
+                                <p>${key}</p>
+                                <p>${value[1]}</p>
+                                <p>$${value[0]}</p>
+                            </div>
+                            `
+                            total += value[0]
+                        }
+                        rows += `
+                        <hr>
+                        <div class="orderRow">
+                                <p>Total</p>
+                                <p id = "total">$${total}</p>
+                        </div>
+                        `
+
+                        document.getElementById("order").innerHTML = rows
+                    } else if (response.status == 404) {
+
+                        showError(result.message);
+                    } else {
+                        // unexpected outcome, throw the error
+                        throw response.status;
+                }
+            } catch (error) {
+                // Errors when calling the service; such as network error, 
+                // service offline, etc
+                showError
+                ('There are currently no outstanding orders, or there is a problem.<br />' + error);
+            } // error
+        });
+
+        $("#formSubmit").click( async(event)=>{
+            $(async() => {           
+                
+                orderID = document.getElementById("orderid").innerText
+                console.log(orderID)
+                alert("Paid", orderID)
+                total = document.getElementById("total").innerText
+                console.log(total)
+                
+                var serviceURL = "http://localhost:5102/update_order/" + orderID;
+                
+                try {
+                    const response =
+                        await fetch(
+                        serviceURL, {
+                        method: 'PUT',
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ status:"Assigned to Pharmacists", total:total})
+                    });
+                    const result = await response.json();
+                    console.log(result);
+                    if (response.status === 200) {
+                            // success case
+                            console.log(result.data)
+                            location.reload();
+
+                        } else if (response.status == 404) {
+                            
+                            showError(result.message);
+                        } else {
+                            // unexpected outcome, throw the error
+                            throw response.status;
+                    }
+                } catch (error) {
+                    // Errors when calling the service; such as network error, 
+                    // service offline, etc
+                    showError
+                    ('There is a problem with payment.<br />' + error);
+                } // error
+                
+                });
+        })
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+</body>
+</html>
