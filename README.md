@@ -171,5 +171,4 @@ To turn the whole system off, please run docker-compose down to turn the enterpr
 ![Order_Confirmation](Readme_images/Order_Confirmation.JPG)
 
 ## Full Video: ##
-![Video](https://youtu.be/T-yHMy_IC8k)
-
+[![Scenarios](https://img.youtube.com/vi/T-yHMy_IC8k/0.jpg)](https://www.youtube.com/watch?v=T-yHMy_IC8k)
