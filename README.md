@@ -170,5 +170,5 @@ To turn the whole system off, please run docker-compose down to turn the enterpr
 **In addition, an email will be sent to the patient that the order has been confirmed.**
 ![Order_Confirmation](Readme_images/Order_Confirmation.JPG)
 
-## Full Video: ## (~No audio~)
+## Full Video (No audio) ## 
 [![Scenarios](https://img.youtube.com/vi/T-yHMy_IC8k/0.jpg)](https://www.youtube.com/watch?v=T-yHMy_IC8k)
